@@ -1,0 +1,37 @@
+{
+  "cookies": [
+    {
+      "name": "Nf2mIV0lxyeSP1ZTYdzXryCE7KtsdQYkpBzTrQo7",
+      "value": "u6T6YOrva5wz0uJqgKd9MBZNnvgidgCrkS78jeGv",
+      "domain": ".foot-africa.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cf_clearance",
+      "value": "YlCPRshGXVBQltYnO.O_iWXz.Vw0VQMwcfU1UFVpDGs-1790607980-1.2.1.1-RQ.Cv1VU2qXCcaWT6VLJM97S2IZoRuV0_N5K91bLSf5a9tSNcPS04X.BoXoBkftUjbGEondZbAkVEcB.xxEyp.xd1zE4yKY9O5kP59RvipLhGTch2r_NIzf3aPBwuLJyOBSISPW5kuTtqyyJ.98wxHHiXfhXUU0cKOSWEOYdxzJGr9pcxotJa1x.F0qTVTC2_OFx38ryQVWXbshNJtLPUbv8KOnPTjMfZBS9cn_gOKVz.GdsiHhJSv6y33UkcxvIGeqMpGWgeJyeC2rUkgYVEZ3GUIWEAIBwHiuGzkfdG145L1BSYIH21HVjnVWlAEpdluO70_WLyE_FSO5ZB2cettxrVmbyQQNHWkR7A04Xk5RRyYpLIbHExyyufF4lAf37ZNpnLv4U2Wog0D9Y5YOfTA",
+      "domain": ".foot-africa.com",
+      "path": "/",
+      "expires": 1822143980.859995,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://foot-africa.com",
+      "_crHasCrossSiteAncestor": false
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://foot-africa.com",
+      "localStorage": [
+        {
+          "name": "footafricaSearchRecent",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}
