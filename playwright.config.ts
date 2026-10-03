@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { getStorageStateFileName, isHeadless } from './common/config';
 
 const CI = !!process.env.CI;
+const USER_AGENT = 'QA autotest v1.0';
 
 export default defineConfig({
   fullyParallel: !CI,
@@ -11,6 +12,7 @@ export default defineConfig({
   reporter: [['html', { outputFolder: 'test-reports/html', open: 'never' }]],
 
   use: {
+    userAgent: USER_AGENT,
     baseURL: 'https://foot-africa.com/',
     headless: isHeadless() || CI,
     screenshot: 'only-on-failure',
