@@ -12,35 +12,34 @@
 # Error details
 
 ```
-TimeoutError: locator.click: Timeout 10000ms exceeded.
+Error: expect(page).toHaveTitle(expected) failed
+
+Expected: "Info Foot - Les dernières actualités du football africain"
+Received: "Just a moment..."
+Timeout:  10000ms
+
 Call log:
-  - waiting for getByRole('banner').getByRole('link', { name: 'Nouvelles', exact: true })
+  - Expect "toHaveTitle" with timeout 10000ms
+    23 × locator resolved to <html dir="ltr" lang="en-US">…</html>
+       - unexpected value "Just a moment..."
 
 ```
 
-# Page snapshot
-
 ```yaml
-- generic [active] [ref=f10e1]:
-  - main [ref=f10e2]:
-    - generic [ref=f10e3]:
-      - heading "foot-africa.com" [level=1] [ref=f10e5]
-      - heading "Performing security verification" [level=2] [ref=f10e6]
-      - paragraph [ref=f10e7]: This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
-  - contentinfo [ref=f10e14]:
-    - generic [ref=f10e16]:
-      - generic [ref=f10e18]:
-        - text: "Ray ID:"
-        - code [ref=f10e19]: a423a7241f61a2c1
-      - generic [ref=f10e20]:
-        - generic [ref=f10e21]:
-          - text: Performance and Security by
-          - link "Cloudflare, opens in a new tab" [ref=f10e22] [cursor=pointer]:
-            - /url: https://www.cloudflare.com?utm_source=challenge&utm_campaign=m
-            - text: Cloudflare
-        - link "Privacy, opens in a new tab" [ref=f10e24] [cursor=pointer]:
-          - /url: https://www.cloudflare.com/privacypolicy/
-          - text: Privacy
+- main:
+  - heading "foot-africa.com" [level=1]
+  - heading "Performing security verification" [level=2]
+  - paragraph: This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+- contentinfo:
+  - text: "Ray ID:"
+  - code: a42b639d5d33c278
+  - text: Performance and Security by
+  - link "Cloudflare, opens in a new tab":
+    - /url: https://www.cloudflare.com?utm_source=challenge&utm_campaign=m
+    - text: Cloudflare
+  - link "Privacy, opens in a new tab":
+    - /url: https://www.cloudflare.com/privacypolicy/
+    - text: Privacy
 ```
 
 # Test source
@@ -82,10 +81,10 @@ Call log:
   34 |         .getByRole('banner')
   35 |         .getByRole('link', { name: 'Nouvelles', exact: true });
   36 | 
-> 37 |     await locator.click();
-     |                   ^ TimeoutError: locator.click: Timeout 10000ms exceeded.
+  37 |     await locator.click();
   38 | 
   39 |     await expect(page).toHaveURL('https://foot-africa.com/actualites/');
-  40 |     await expect(page).toHaveTitle('Info Foot - Les dernières actualités du football africain');
+> 40 |     await expect(page).toHaveTitle('Info Foot - Les dernières actualités du football africain');
+     |                        ^ Error: expect(page).toHaveTitle(expected) failed
   41 | });
 ```
