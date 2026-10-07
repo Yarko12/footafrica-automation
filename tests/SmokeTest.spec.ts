@@ -39,3 +39,19 @@ test('Click on News and check transition', async ({ page }) => {
     await expect(page).toHaveURL('https://foot-africa.com/actualites/');
     await expect(page).toHaveTitle('Info Foot - Les dernières actualités du football africain');
 });
+
+test('Check authorisation on site', async ({ page }) => {
+    await page.getByRole('button', { name: 'Connexion' }).click();
+
+    const loginForm = page.locator('#signIn');
+    await expect(loginForm).toBeVisible({ timeout: 15_000 });
+
+    await loginForm.getByLabel('E-mail').fill('sokil20@meta.ua');
+    await loginForm.getByLabel('Mot de passe').fill('Volta12s');
+
+    await loginForm.getByRole('button', { name: 'Se connecter' }).click();
+
+    await expect(
+        page.getByRole('button', { name: 'Connexion' })
+    ).toBeHidden();
+});
