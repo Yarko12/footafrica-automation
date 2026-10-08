@@ -1,4 +1,5 @@
 import { test, expect } from '../fixtures/page';
+import { waitForCloudflareToPass } from '../common/cloudflare';
 
 test('URL and title are valid', async ({ page }) => {
   await expect(page).toHaveURL('https://foot-africa.com/');
@@ -50,7 +51,7 @@ test('Check authorisation on site', async ({ page }) => {
     await loginForm.getByLabel('Mot de passe').fill('Volta12s');
 
     await loginForm.getByRole('button', { name: 'Se connecter' }).click();
-
+    await waitForCloudflareToPass(page);
     await expect(
         page.getByRole('button', { name: 'Connexion' })
     ).toBeHidden();

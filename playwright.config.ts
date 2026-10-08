@@ -32,6 +32,7 @@ export default defineConfig({
       testMatch: '**/foot-africa-setup.ts',
       use: {
         ...devices['Desktop Chrome'],
+        userAgent: USER_AGENT,
       },
     },
     {
@@ -40,6 +41,7 @@ export default defineConfig({
       testMatch: '**/*.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
+        userAgent: USER_AGENT,
         storageState: getStorageStateFileName('foot-africa'),
       },
       dependencies: ['foot-africa-setup'],
