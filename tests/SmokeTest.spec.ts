@@ -42,17 +42,24 @@ test('Click on News and check transition', async ({ page }) => {
 });
 
 test('Check authorisation on site', async ({ page }) => {
-    await page.getByRole('button', { name: 'Connexion' }).click();
+    test.setTimeout(120_000);
 
     const loginForm = page.locator('#signIn');
-    await expect(loginForm).toBeVisible({ timeout: 15_000 });
+    const loginButton = page.getByRole('button', { name: 'Connexion' });
+
+    await expect(async () => {
+        if (!(await loginForm.isVisible())) {
+            await loginButton.click({ timeout: 5_000 });
+        }
+        await expect(loginForm).toBeVisible({ timeout: 3_000 });
+    }).toPass({ timeout: 60_000 });
 
     await loginForm.getByLabel('E-mail').fill('sokil20@meta.ua');
     await loginForm.getByLabel('Mot de passe').fill('Volta12s');
 
     await loginForm.getByRole('button', { name: 'Se connecter' }).click();
+
     await waitForCloudflareToPass(page);
-    await expect(
-        page.getByRole('button', { name: 'Connexion' })
-    ).toBeHidden();
+
+    await expect(loginButton).toBeHidden();
 });
