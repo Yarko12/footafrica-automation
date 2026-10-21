@@ -1,5 +1,6 @@
 import { test, expect } from '../fixtures/page';
 import { waitForCloudflareToPass } from '../common/cloudflare';
+import type { Page } from '@playwright/test';
 
 test('URL and title are valid', async ({ page }) => {
   await expect(page).toHaveURL('https://foot-africa.com/');
@@ -64,16 +65,10 @@ test('Check authorisation on site', async ({ page }) => {
     await expect(loginButton).toBeHidden();
 });
 
-test('Add comment to first news', async ({ page }) => {
-    test.setTimeout(180_000);
-
+// Logs in from the comments block, then adds, edits and deletes a comment.
+// Works on any page with the comments block (news, bookmakers).
+async function addEditDeleteComment(page: Page) {
     const commentText = 'Goal!';
-
-    const firstNews = page.locator('.news-list_main .news-item-col_big .news-item-col__link').first();
-    await expect(firstNews).toBeVisible();
-    await firstNews.click();
-    await expect(page).toHaveURL(/\/actualites\/.+-\d+\/$/);
-
     const comments = page.locator('#comments');
     const loginButton = page.locator('.comments__not-auth .js-login-button');
     await loginButton.scrollIntoViewIfNeeded();
@@ -133,4 +128,32 @@ test('Add comment to first news', async ({ page }) => {
     await commentToDelete.locator('.js-delete-comment').click();
 
     await expect(editedComment).toHaveCount(0, { timeout: 15_000 });
+}
+
+test('Add comment to first news', async ({ page }) => {
+    test.setTimeout(180_000);
+
+    const firstNews = page.locator('.news-list_main .news-item-col_big .news-item-col__link').first();
+    await expect(firstNews).toBeVisible();
+    await firstNews.click();
+    await expect(page).toHaveURL(/\/actualites\/.+-\d+\/$/);
+
+    await addEditDeleteComment(page);
+});
+
+test('Add comment to first bookmaker', async ({ page }) => {
+    test.setTimeout(180_000);
+
+    await page.locator('header a.header__link-main[href="/paris-sportifs/"]').click();
+    await waitForCloudflareToPass(page);
+    await expect(page).toHaveURL(/\/paris-sportifs\/$/);
+
+    // Bookmaker ranked #1 (it is not always the first card on the page)
+    const firstBookmaker = page.locator('.bookmaker-item_1 .bookmaker-item__link');
+    const bookmakerHref = await firstBookmaker.getAttribute('href');
+    await firstBookmaker.click();
+    await waitForCloudflareToPass(page);
+    await expect(page).toHaveURL(new RegExp(`${bookmakerHref}$`));
+
+    await addEditDeleteComment(page);
 });
