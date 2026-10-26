@@ -157,3 +157,53 @@ test('Add comment to first bookmaker', async ({ page }) => {
 
     await addEditDeleteComment(page);
 });
+
+// Search cases: what to type, which result must come first and which page type it opens
+const searchCases = [
+    { title: 'team', query: 'Barcelona', expectedName: /barcelon/i, expectedPath: '/club/' },
+    { title: 'player', query: 'Kylian Mbappé', expectedName: 'Kylian Mbappé', expectedPath: '/joueur/' },
+    { title: 'league', query: 'Ligue 1 France', expectedName: 'Ligue 1 France', expectedPath: '/ligues/' },
+    // The site is in French, so "Spain" is found as "Espagne" (the national team page)
+    { title: 'country', query: 'Spain', expectedName: 'Espagne', expectedPath: '/club/' },
+];
+
+for (const searchCase of searchCases) {
+    test(`Search for a ${searchCase.title} and open the first result`, async ({ page }) => {
+        // Open the search popup from the header (retry: the first click can come before the page script is ready)
+        const searchModal = page.locator('.js-search-modal');
+        await expect(async () => {
+            if (!(await searchModal.isVisible())) {
+                await page.locator('header .js-open-search-modal-btn').click({ timeout: 5_000 });
+            }
+            await expect(searchModal).toBeVisible({ timeout: 3_000 });
+        }).toPass({ timeout: 30_000 });
+
+        await searchModal.locator('.js-search-input').fill(searchCase.query);
+
+        // Search results appear in their own block (not in "Suggestions")
+        const firstResult = searchModal.locator('.js-search-content .search-modal-item__name-link').first();
+        await expect(firstResult).toBeVisible({ timeout: 15_000 });
+        await expect(firstResult).toContainText(searchCase.expectedName);
+        await expect(firstResult).toHaveAttribute('href', new RegExp(`^${searchCase.expectedPath}`));
+
+        const resultName = (await firstResult.innerText()).trim();
+        const resultHref = await firstResult.getAttribute('href');
+
+        // Wait for the final page response (after any redirects)
+        const responsePromise = page.waitForResponse(
+            (response) =>
+                response.request().isNavigationRequest() &&
+                response.request().frame() === page.mainFrame() &&
+                (response.status() < 300 || response.status() >= 400)
+        );
+
+        await firstResult.click();
+
+        const response = await responsePromise;
+        await waitForCloudflareToPass(page);
+
+        expect(response.status(), `HTTP status of ${response.url()}`).toBeLessThan(400);
+        await expect(page).toHaveURL(new RegExp(`${resultHref}$`));
+        await expect(page.locator('h1')).toContainText(resultName);
+    });
+}
