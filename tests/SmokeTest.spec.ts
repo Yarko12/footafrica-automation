@@ -130,32 +130,38 @@ async function addEditDeleteComment(page: Page) {
     await expect(editedComment).toHaveCount(0, { timeout: 15_000 });
 }
 
-test('Add comment to first news', async ({ page }) => {
-    test.setTimeout(180_000);
+// Both tests post "Goal!" from the same account, so they run one after another
+// instead of posting at the same moment in parallel workers
+test.describe('Comments', () => {
+    test.describe.configure({ mode: 'serial' });
 
-    const firstNews = page.locator('.news-list_main .news-item-col_big .news-item-col__link').first();
-    await expect(firstNews).toBeVisible();
-    await firstNews.click();
-    await expect(page).toHaveURL(/\/actualites\/.+-\d+\/$/);
+    test('Add comment to first news', async ({ page }) => {
+        test.setTimeout(180_000);
 
-    await addEditDeleteComment(page);
-});
+        const firstNews = page.locator('.news-list_main .news-item-col_big .news-item-col__link').first();
+        await expect(firstNews).toBeVisible();
+        await firstNews.click();
+        await expect(page).toHaveURL(/\/actualites\/.+-\d+\/$/);
 
-test('Add comment to first bookmaker', async ({ page }) => {
-    test.setTimeout(180_000);
+        await addEditDeleteComment(page);
+    });
 
-    await page.locator('header a.header__link-main[href="/paris-sportifs/"]').click();
-    await waitForCloudflareToPass(page);
-    await expect(page).toHaveURL(/\/paris-sportifs\/$/);
+    test('Add comment to first bookmaker', async ({ page }) => {
+        test.setTimeout(180_000);
 
-    // Bookmaker ranked #1 (it is not always the first card on the page)
-    const firstBookmaker = page.locator('.bookmaker-item_1 .bookmaker-item__link');
-    const bookmakerHref = await firstBookmaker.getAttribute('href');
-    await firstBookmaker.click();
-    await waitForCloudflareToPass(page);
-    await expect(page).toHaveURL(new RegExp(`${bookmakerHref}$`));
+        await page.locator('header a.header__link-main[href="/paris-sportifs/"]').click();
+        await waitForCloudflareToPass(page);
+        await expect(page).toHaveURL(/\/paris-sportifs\/$/);
 
-    await addEditDeleteComment(page);
+        // Bookmaker ranked #1 (it is not always the first card on the page)
+        const firstBookmaker = page.locator('.bookmaker-item_1 .bookmaker-item__link');
+        const bookmakerHref = await firstBookmaker.getAttribute('href');
+        await firstBookmaker.click();
+        await waitForCloudflareToPass(page);
+        await expect(page).toHaveURL(new RegExp(`${bookmakerHref}$`));
+
+        await addEditDeleteComment(page);
+    });
 });
 
 // Search cases: what to type, which result must come first and which page type it opens
